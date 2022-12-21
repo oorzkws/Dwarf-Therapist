@@ -967,6 +967,13 @@ QVector<VIRTADDR> DFInstance::get_creatures(bool report_progress){
             LOGI << "using active unit list";
         }
     }
+    // Finally fallback to all units
+    if (entries.isEmpty()) {
+        entries = enumerate_vector(m_layout->global_address(this, "creature_vector"));
+        if (report_progress) {
+            LOGI << "using all unit list";
+        }
+    }
     if(entries.count() > 0 && m_status == DFS_LAYOUT_OK){
         m_status = DFS_GAME_LOADED;
     }
