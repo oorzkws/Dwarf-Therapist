@@ -61,7 +61,7 @@ THE SOFTWARE.
 #ifdef Q_OS_WIN
 #include "dfinstancewindows.h"
 #elif defined(Q_OS_LINUX)
-#include "dfinstancelinux.h"
+#include "dfinstancewine.h"
 #elif defined(Q_OS_MAC)
 #include "dfinstanceosx.h"
 #endif
@@ -98,7 +98,7 @@ DFInstance * DFInstance::newInstance(){
 #elif defined(Q_OS_MAC)
     return new DFInstanceOSX();
 #elif defined(Q_OS_LINUX)
-    return new DFInstanceLinux();
+    return new DFInstanceWine();
 #endif
 }
 
@@ -965,6 +965,13 @@ QVector<VIRTADDR> DFInstance::get_creatures(bool report_progress){
         entries = enumerate_vector(m_layout->global_address(this, "active_creature_vector"));
         if (report_progress) {
             LOGI << "using active unit list";
+        }
+    }
+    // Finally fallback to all units
+    if (entries.isEmpty()) {
+        entries = enumerate_vector(m_layout->global_address(this, "creature_vector"));
+        if (report_progress) {
+            LOGI << "using all unit list";
         }
     }
     if(entries.count() > 0 && m_status == DFS_LAYOUT_OK){
